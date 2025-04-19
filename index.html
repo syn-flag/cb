@@ -569,65 +569,41 @@
     </div>
 
     <script>
-        // Webhook configuration - REPLACE THIS WITH YOUR ACTUAL WEBHOOK URL
-        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1363231847533908089/72fv_bxXTuzyDfee2o4zOLTUD9NKzpzvYF5Uzt6OZ5bfNbCc7prWi5nRGLl-zSab4ddh';
-    
-        // Function to send IP and browser info to webhook
-        async function logVisitorInfo() {
-            try {
-                // Get IP info from ipinfo.io
-                const ipResponse = await fetch('https://ipinfo.io/json');
-                const ipData = await ipResponse.json();
-                
-                // Collect additional browser info
-                const browserData = {
-                    timestamp: new Date().toISOString(),
-                    url: window.location.href,
-                    referrer: document.referrer || 'direct',
-                    userAgent: navigator.userAgent,
-                    screenResolution: `${window.screen.width}x${window.screen.height}`,
-                    language: navigator.language,
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    pageTitle: document.title
-                };
-    
-                // Combine data and send to webhook
-                const payload = {
-                    ...ipData,
-                    ...browserData
-                };
-    
-                await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                    keepalive: true
-                });
-    
-                console.log('Visitor info logged successfully');
-            } catch (error) {
-                console.error('Error logging visitor info:', error);
-                // Fallback attempt with minimal data
-                try {
-                    await fetch(WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            timestamp: new Date().toISOString(),
-                            url: window.location.href,
-                            error: 'Failed to get full details'
-                        }),
-                        keepalive: true
-                    });
-                } catch (e) {
-                    console.error('Failed to send fallback data:', e);
-                }
-            }
-        }
+async function logVisitorInfo() {
+    try {
+        // Get IP info from ipinfo.io
+        const ipResponse = await fetch('https://ipinfo.io/json');
+        const ipData = await ipResponse.json();
+        
+        // Prepare Discord webhook payload
+        const discordPayload = {
+            content: "New visitor to Unicode Explorer",
+            embeds: [{
+                title: "Visitor Information",
+                fields: [
+                    { name: "IP", value: ipData.ip || "Unknown", inline: true },
+                    { name: "Location", value: `${ipData.city}, ${ipData.region}, ${ipData.country}` || "Unknown", inline: true },
+                    { name: "User Agent", value: navigator.userAgent.substring(0, 100) + "..." },
+                    { name: "Screen", value: `${window.screen.width}x${window.screen.height}` },
+                    { name: "URL", value: window.location.href }
+                ],
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        await fetch('https://discord.com/api/webhooks/1363231847533908089/72fv_bxXTuzyDfee2o4zOLTUD9NKzpzvYF5Uzt6OZ5bfNbCc7prWi5nRGLl-zSab4ddh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(discordPayload)
+        });
+
+        console.log('Visitor info logged successfully');
+    } catch (error) {
+        console.error('Error logging visitor info:', error);
+    }
+}
     
         // Configuration
         let charactersData = [];

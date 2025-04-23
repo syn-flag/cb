@@ -3,1181 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Unicode Explorer</title>
-    
-    <!-- Embedding metadata -->
-    <meta property="og:title" content="Complete Unicode Explorer">
-    <meta property="og:description" content="Browse and search all Unicode characters. Find, copy, and learn about any Unicode character in one place.">
-    <meta property="og:image" content="data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3e%3crect width='1200' height='630' fill='%235850ec'/%3e%3ctext x='600' y='300' font-family='Arial' font-size='72' fill='white' text-anchor='middle' dominant-baseline='middle'%3eUnicode Explorer%3c/text%3e%3ctext x='600' y='400' font-family='Arial' font-size='36' fill='white' text-anchor='middle' dominant-baseline='middle'%3e万 € ♥ ☺ Ω ⚡ 🔍 🔊%3c/text%3e%3c/svg%3e">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    
+    <title>synflag :)</title>
     <style>
-        :root {
-            --primary: #5850ec;
-            --primary-dark: #4338ca;
-            --secondary: #1f2937;
-            --light: #f9fafb;
-            --gray: #6b7280;
-            --dark: #111827;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
-            background-color: var(--light);
-        }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        h1 {
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            font-size: 1.8rem;
-        }
-
-        .header-content {
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        @media (min-width: 768px) {
-            .header-content {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .search-container {
-            display: flex;
-            gap: 0.5rem;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        input, select {
-            padding: 0.75rem 1rem;
-            border-radius: 0.375rem;
-            border: 1px solid var(--gray);
-            font-size: 1rem;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(88, 80, 236, 0.2);
-        }
-
-        input[type="search"], input[type="text"] {
-            flex-grow: 1;
-        }
-
-        .filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 1rem 0;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        label {
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: var(--gray);
-        }
-
-        main {
-            padding: 2rem 0;
-        }
-
-        .info-bar {
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        .char-count {
-            font-weight: 500;
-        }
-
-        .input-character {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--gray);
-            color: var(--gray);
-        }
-
-        .btn-outline:hover {
-            background-color: #f3f4f6;
-        }
-
-        .virtual-scroll-container {
-            position: relative;
-            height: calc(100vh - 300px);
-            min-height: 500px;
-            overflow: auto;
-            border-radius: 0.5rem;
-            background-color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .characters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 0.5rem;
-            padding: 1rem;
-        }
-
-        @media (min-width: 640px) {
-            .characters-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            }
-        }
-
-        .character-box {
-            position: relative;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            height: 80px;
-            padding: 0.75rem;
-            background-color: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 2rem;
+            align-items: center;
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle at center, #1a0808 0%, #0a0a0a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
+            color: #ff3333;
         }
-
-        .character-box:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+        
+        .container {
+            text-align: center;
+            position: relative;
             z-index: 2;
         }
-
-        .character-details {
+        
+        h1 {
+            font-size: 5rem;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        .particles {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            font-size: 0.65rem;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 0.25rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-            text-align: center;
-        }
-
-        .character-box:hover .character-details {
-            opacity: 1;
-        }
-
-        .copied-toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--success);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            box-shadow: var(--shadow);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            z-index: 1001;
-        }
-
-        .copied-toast.visible {
-            opacity: 1;
-        }
-
-        .details-modal {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
+            z-index: 1;
         }
-
-        .details-modal.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            width: 90%;
-            max-width: 500px;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .char-display {
-            font-size: 4rem;
-            text-align: center;
-            margin-bottom: 1rem;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .char-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .char-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .info-label {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-
-        .info-value {
-            font-size: 0.875rem;
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(88, 80, 236, 0.1);
-            border-left-color: var(--primary);
+        
+        .particle {
+            position: absolute;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            opacity: 0.4;
+            animation: float 15s infinite ease-in-out;
         }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+            100% { text-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-30px) translateX(20px) rotate(90deg); }
+            50% { transform: translateY(0) translateX(40px) rotate(180deg); }
+            75% { transform: translateY(30px) translateX(20px) rotate(270deg); }
+            100% { transform: translateY(0) translateX(0) rotate(360deg); }
+        }
+        
+        .glow-effect {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: 0;
+            animation: breathe 8s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 0.3; }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
             }
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--gray);
-        }
-
-        .scroll-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 99;
-        }
-
-        .scroll-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .char-input-display {
-            font-size: 2rem;
-            min-width: 80px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--gray);
-            border-radius: 0.375rem;
-            margin-left: 1rem;
-        }
-
-        .load-more-btn {
-            display: block;
-            margin: 2rem auto;
-            padding: 0.75rem 1.5rem;
-        }
-
-        .range-indicator {
-            background-color: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: 0.375rem;
-            font-weight: 500;
-        }
-
-        /* For slow machines, reduce visible characters initially */
-        .performance-mode .character-box {
-            transition: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <h1>Complete Unicode Explorer</h1>
-                <div class="search-container">
-                    <input type="search" id="search-input" placeholder="Search by name, code point, or character...">
-                    <button class="btn btn-primary" id="search-btn">Search</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="container">
-        <div class="filters">
-            <div class="filter-group">
-                <label for="category-filter">Category</label>
-                <select id="category-filter">
-                    <option value="">All Categories</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="block-filter">Unicode Block</label>
-                <select id="block-filter">
-                    <option value="">All Blocks</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="range-filter">Code Range</label>
-                <select id="range-filter">
-                    <option value="">All Ranges</option>
-                    <option value="0,127">ASCII (0-127)</option>
-                    <option value="128,255">Extended ASCII (128-255)</option>
-                    <option value="256,383">Latin Extended (256-383)</option>
-                    <option value="8192,8303">General Punctuation (8192-8303)</option>
-                    <option value="8704,8959">Mathematical Operators (8704-8959)</option>
-                    <option value="9728,9983">Miscellaneous Symbols (9728-9983)</option>
-                    <option value="128512,128591">Emoticons (128512-128591)</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="input-character">
-            <div class="filter-group">
-                <label for="char-input">Type a character to see its Unicode</label>
-                <input type="text" id="char-input" placeholder="Type any character...">
-            </div>
-            <div class="char-input-display" id="char-input-display"></div>
-        </div>
-
-        <div class="info-bar">
-            <div class="char-count">Showing <span id="visible-count">0</span> of <span id="total-count">0</span> characters</div>
-            <div>
-                <label for="performance-toggle">Performance Mode</label>
-                <input type="checkbox" id="performance-toggle" checked>
-            </div>
-        </div>
-
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-        </div>
-
-        <div id="virtual-scroll-container" class="virtual-scroll-container" style="display: none;">
-            <div id="range-indicators"></div>
-            <div id="characters-container" class="characters-grid"></div>
-        </div>
-        
-        <button id="load-more-btn" class="btn btn-primary load-more-btn" style="display: none;">Load More Characters</button>
-    </main>
-
-    <div class="copied-toast" id="copied-toast">Character copied to clipboard!</div>
-    
-    <div class="scroll-to-top" id="scroll-to-top">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </div>
-
-    <div class="details-modal" id="details-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Character Details</h2>
-                <button class="modal-close" id="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="char-display" id="modal-char"></div>
-                
-                <div class="char-actions">
-                    <button class="btn btn-primary" id="copy-char">Copy Character</button>
-                    <button class="btn btn-outline" id="copy-code">Copy Code Point</button>
-                    <button class="btn btn-outline" id="copy-html">Copy HTML Entity</button>
-                </div>
-                
-                <div class="char-info">
-                    <div class="info-item">
-                        <div class="info-label">Name</div>
-                        <div class="info-value" id="modal-name">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Code Point</div>
-                        <div class="info-value" id="modal-code">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">HTML Entity</div>
-                        <div class="info-value" id="modal-html">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">CSS Escape</div>
-                        <div class="info-value" id="modal-css">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">JavaScript</div>
-                        <div class="info-value" id="modal-js">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Category</div>
-                        <div class="info-value" id="modal-category">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Block</div>
-                        <div class="info-value" id="modal-block">-</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="glow-effect"></div>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <h1>synflag :)</h1>
     </div>
 
     <script>
-async function logVisitorInfo() {
-    try {
-        // Get IP info from ipinfo.io
-        const ipResponse = await fetch('https://ipinfo.io/json');
-        const ipData = await ipResponse.json();
+        const particlesContainer = document.getElementById('particles');
+        const numberOfParticles = 15;
         
-        // Prepare Discord webhook payload
-        const discordPayload = {
-            content: "New visitor to Unicode Explorer",
-            embeds: [{
-                title: "Visitor Information",
-                fields: [
-                    { name: "IP", value: ipData.ip || "Unknown", inline: true },
-                    { name: "Location", value: `${ipData.city}, ${ipData.region}, ${ipData.country}` || "Unknown", inline: true },
-                    { name: "User Agent", value: navigator.userAgent.substring(0, 100) + "..." },
-                    { name: "Screen", value: `${window.screen.width}x${window.screen.height}` },
-                    { name: "URL", value: window.location.href }
-                ],
-                timestamp: new Date().toISOString()
-            }]
-        };
-
-        await fetch('https://discord.com/api/webhooks/1363231847533908089/72fv_bxXTuzyDfee2o4zOLTUD9NKzpzvYF5Uzt6OZ5bfNbCc7prWi5nRGLl-zSab4ddh', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(discordPayload)
-        });
-
-        console.log('Visitor info logged successfully');
-    } catch (error) {
-        console.error('Error logging visitor info:', error);
-    }
-}
-    
-        // Configuration
-        let charactersData = [];
-        let filteredData = [];
-        let visibleCharacters = 1000; // Start with a reasonable number for performance
-        const LOAD_MORE_INCREMENT = 1000;
-        const MAX_CHARACTERS = 65536; // Total Unicode BMP characters
-        let performanceMode = true; // Default to performance mode
-    
-        // Unicode blocks data (simplified version)
-        const unicodeBlocks = [
-            { start: 0, end: 127, name: 'Basic Latin' },
-            { start: 128, end: 255, name: 'Latin-1 Supplement' },
-            { start: 256, end: 383, name: 'Latin Extended-A' },
-            { start: 384, end: 591, name: 'Latin Extended-B' },
-            { start: 592, end: 687, name: 'IPA Extensions' },
-            { start: 688, end: 767, name: 'Spacing Modifier Letters' },
-            { start: 768, end: 879, name: 'Combining Diacritical Marks' },
-            { start: 880, end: 1023, name: 'Greek and Coptic' },
-            { start: 1024, end: 1279, name: 'Cyrillic' },
-            { start: 1280, end: 1327, name: 'Cyrillic Supplement' },
-            { start: 1328, end: 1423, name: 'Armenian' },
-            { start: 1424, end: 1535, name: 'Hebrew' },
-            { start: 1536, end: 1791, name: 'Arabic' },
-            { start: 2304, end: 2431, name: 'Devanagari' },
-            { start: 3584, end: 3711, name: 'Thai' },
-            { start: 4352, end: 4607, name: 'Hangul Jamo' },
-            { start: 8192, end: 8303, name: 'General Punctuation' },
-            { start: 8352, end: 8399, name: 'Currency Symbols' },
-            { start: 8400, end: 8447, name: 'Combining Diacritical Marks for Symbols' },
-            { start: 8448, end: 8527, name: 'Letterlike Symbols' },
-            { start: 8528, end: 8591, name: 'Number Forms' },
-            { start: 8592, end: 8703, name: 'Arrows' },
-            { start: 8704, end: 8959, name: 'Mathematical Operators' },
-            { start: 8960, end: 9215, name: 'Miscellaneous Technical' },
-            { start: 9216, end: 9279, name: 'Control Pictures' },
-            { start: 9280, end: 9311, name: 'Optical Character Recognition' },
-            { start: 9312, end: 9471, name: 'Enclosed Alphanumerics' },
-            { start: 9472, end: 9599, name: 'Box Drawing' },
-            { start: 9600, end: 9631, name: 'Block Elements' },
-            { start: 9632, end: 9727, name: 'Geometric Shapes' },
-            { start: 9728, end: 9983, name: 'Miscellaneous Symbols' },
-            { start: 9984, end: 10175, name: 'Dingbats' },
-            { start: 10176, end: 10223, name: 'Miscellaneous Mathematical Symbols-A' },
-            { start: 10224, end: 10239, name: 'Supplemental Arrows-A' },
-            { start: 10240, end: 10495, name: 'Braille Patterns' },
-            { start: 11904, end: 12031, name: 'CJK Radicals Supplement' },
-            { start: 12288, end: 12351, name: 'CJK Symbols and Punctuation' },
-            { start: 12352, end: 12447, name: 'Hiragana' },
-            { start: 12448, end: 12543, name: 'Katakana' },
-            { start: 19968, end: 40959, name: 'CJK Unified Ideographs' },
-            { start: 127744, end: 128511, name: 'Miscellaneous Symbols and Pictographs' },
-            { start: 128512, end: 128591, name: 'Emoticons' },
-            { start: 128640, end: 128767, name: 'Transport and Map Symbols' }
+        const colors = [
+            'rgba(139, 0, 0, 0.5)',
+            'rgba(165, 0, 0, 0.4)',
+            'rgba(120, 0, 0, 0.3)',
+            'rgba(90, 0, 0, 0.5)',
+            'rgba(70, 0, 0, 0.4)'
         ];
-    
-        // Unicode categories
-        const categories = [
-            'Letter', 'Mark', 'Number', 'Punctuation', 
-            'Symbol', 'Separator', 'Other'
-        ];
-    
-        // DOM references
-        const charactersContainer = document.getElementById('characters-container');
-        const virtualScrollContainer = document.getElementById('virtual-scroll-container');
-        const loading = document.getElementById('loading');
-        const searchInput = document.getElementById('search-input');
-        const searchBtn = document.getElementById('search-btn');
-        const categoryFilter = document.getElementById('category-filter');
-        const blockFilter = document.getElementById('block-filter');
-        const rangeFilter = document.getElementById('range-filter');
-        const visibleCount = document.getElementById('visible-count');
-        const totalCount = document.getElementById('total-count');
-        const copiedToast = document.getElementById('copied-toast');
-        const detailsModal = document.getElementById('details-modal');
-        const modalClose = document.getElementById('modal-close');
-        const modalChar = document.getElementById('modal-char');
-        const modalTitle = document.getElementById('modal-title');
-        const modalName = document.getElementById('modal-name');
-        const modalCode = document.getElementById('modal-code');
-        const modalHtml = document.getElementById('modal-html');
-        const modalCss = document.getElementById('modal-css');
-        const modalJs = document.getElementById('modal-js');
-        const modalCategory = document.getElementById('modal-category');
-        const modalBlock = document.getElementById('modal-block');
-        const copyCharBtn = document.getElementById('copy-char');
-        const copyCodeBtn = document.getElementById('copy-code');
-        const copyHtmlBtn = document.getElementById('copy-html');
-        const scrollToTop = document.getElementById('scroll-to-top');
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        const charInput = document.getElementById('char-input');
-        const charInputDisplay = document.getElementById('char-input-display');
-        const rangeIndicators = document.getElementById('range-indicators');
-        const performanceToggle = document.getElementById('performance-toggle');
-    
-        // Initialize the application
-        function init() {
-            populateFilters();
-            generateCharactersData();
-            setupEventListeners();
-            logVisitorInfo(); // Call the logger when page loads
-            document.body.classList.toggle('performance-mode', performanceMode);
-        }
-    
-        // Populate filter dropdowns
-        function populateFilters() {
-            // Categories
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                categoryFilter.appendChild(option);
-            });
-    
-            // Unicode blocks
-            unicodeBlocks.forEach(block => {
-                const option = document.createElement('option');
-                option.value = `${block.start},${block.end}`;
-                option.textContent = block.name;
-                blockFilter.appendChild(option);
-            });
-        }
-    
-        // Generate characters data
-        function generateCharactersData() {
-            for (let i = 0; i < MAX_CHARACTERS; i++) {
-                try {
-                    const char = String.fromCodePoint(i);
-                    const hexCode = i.toString(16).toUpperCase().padStart(4, '0');
-                    const blockInfo = getBlockInfo(i);
-                    const category = getCategoryForChar(i);
-                    
-                    // Skip control characters and invalid characters for display
-                    if (i < 32 || (i >= 127 && i <= 159)) continue;
-                    
-                    charactersData.push({
-                        char: char,
-                        codePoint: i,
-                        hexCode: hexCode,
-                        name: getCharacterName(i, hexCode),
-                        htmlEntity: `&#${i};`,
-                        cssEscape: `\\${hexCode}`,
-                        jsEscape: i <= 0xFFFF ? `\\u${hexCode}` : `\\u{${hexCode}}`,
-                        block: blockInfo ? blockInfo.name : 'Unknown Block',
-                        category: category
-                    });
-                } catch (e) {
-                    // Skip characters that can't be represented
-                    continue;
-                }
-            }
-            
-            // Add some emoticons and symbols from higher unicode ranges
-            for (let i = 128512; i < 128591; i++) {
-                try {
-                    const char = String.fromCodePoint(i);
-                    const hexCode = i.toString(16).toUpperCase().padStart(4, '0');
-                    const blockInfo = getBlockInfo(i);
-                    
-                    charactersData.push({
-                        char: char,
-                        codePoint: i,
-                        hexCode: hexCode,
-                        name: getCharacterName(i, hexCode),
-                        htmlEntity: `&#${i};`,
-                        cssEscape: `\\${hexCode}`,
-                        jsEscape: `\\u{${hexCode}}`,
-                        block: blockInfo ? blockInfo.name : 'Unknown Block',
-                        category: 'Symbol'
-                    });
-                } catch (e) {
-                    continue;
-                }
-            }
-            
-            // Apply initial filters
-            applyFilters();
-        }
-    
-        // Get block info for a code point
-        function getBlockInfo(codePoint) {
-            return unicodeBlocks.find(block => 
-                codePoint >= block.start && codePoint <= block.end
-            );
-        }
-    
-        // Generate character name (simplified)
-        function getCharacterName(codePoint, hexCode) {
-            // This is a simplified naming scheme - a real implementation would use the Unicode database
-            if (codePoint >= 0 && codePoint <= 127) {
-                // ASCII characters
-                if (codePoint >= 65 && codePoint <= 90) return `LATIN CAPITAL LETTER ${String.fromCharCode(codePoint)}`;
-                if (codePoint >= 97 && codePoint <= 122) return `LATIN SMALL LETTER ${String.fromCharCode(codePoint)}`;
-                if (codePoint >= 48 && codePoint <= 57) return `DIGIT ${String.fromCharCode(codePoint)}`;
-                
-                // Special ASCII characters
-                const specialChars = {
-                    32: 'SPACE',
-                    33: 'EXCLAMATION MARK',
-                    34: 'QUOTATION MARK',
-                    35: 'NUMBER SIGN',
-                    36: 'DOLLAR SIGN',
-                    37: 'PERCENT SIGN',
-                    38: 'AMPERSAND',
-                    39: 'APOSTROPHE',
-                    40: 'LEFT PARENTHESIS',
-                    41: 'RIGHT PARENTHESIS',
-                    42: 'ASTERISK',
-                    43: 'PLUS SIGN',
-                    44: 'COMMA',
-                    45: 'HYPHEN-MINUS',
-                    46: 'FULL STOP',
-                    47: 'SOLIDUS'
-                };
-                
-                if (specialChars[codePoint]) return specialChars[codePoint];
-            } else if (codePoint >= 128512 && codePoint <= 128591) {
-                // Emoticons range - simplified names
-                return `EMOTICON U+${hexCode}`;
-            }
-            
-            // For other ranges, use a generic name
-            return `CHARACTER U+${hexCode}`;
-        }
-    
-        // Get category for a character (simplified)
-        function getCategoryForChar(codePoint) {
-            if ((codePoint >= 65 && codePoint <= 90) || (codePoint >= 97 && codePoint <= 122)) {
-                return 'Letter';
-            } else if (codePoint >= 48 && codePoint <= 57) {
-                return 'Number';
-            } else if ((codePoint >= 33 && codePoint <= 47) || (codePoint >= 58 && codePoint <= 64) || 
-                       (codePoint >= 91 && codePoint <= 96) || (codePoint >= 123 && codePoint <= 126)) {
-                return 'Punctuation';
-            } else if (codePoint === 32) {
-                return 'Separator';
-            } else if (codePoint >= 128512 && codePoint <= 128591) {
-                return 'Symbol';
-            } else {
-                // Simplified category assignment based on code ranges
-                if (codePoint < 128) return 'Other';
-                if (codePoint < 256) return 'Letter';
-                if (codePoint < 768) return 'Letter';
-                if (codePoint < 880) return 'Mark';
-                if (codePoint < 1024) return 'Letter';
-                if (codePoint < 8192) return 'Letter';
-                if (codePoint < 8304) return 'Punctuation';
-                if (codePoint < 8352) return 'Number';
-                if (codePoint < 8400) return 'Symbol';
-                if (codePoint < 8448) return 'Mark';
-                if (codePoint < 8528) return 'Symbol';
-                if (codePoint < 8592) return 'Number';
-                if (codePoint < 8704) return 'Symbol';
-                if (codePoint < 9216) return 'Symbol';
-                if (codePoint < 9280) return 'Symbol';
-                return 'Symbol';
-            }
-        }
-    
-        // Setup event listeners
-        function setupEventListeners() {
-            searchBtn.addEventListener('click', applyFilters);
-            
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    applyFilters();
-                }
-            });
-            
-            categoryFilter.addEventListener('change', applyFilters);
-            
-            blockFilter.addEventListener('change', () => {
-                applyFilters();
-                
-                // Reset range filter when block filter changes
-                if (blockFilter.value) {
-                    rangeFilter.value = '';
-                }
-            });
-            
-            rangeFilter.addEventListener('change', () => {
-                applyFilters();
-                
-                // Reset block filter when range filter changes
-                if (rangeFilter.value) {
-                    blockFilter.value = '';
-                }
-            });
-            
-            modalClose.addEventListener('click', closeModal);
-            detailsModal.addEventListener('click', (e) => {
-                if (e.target === detailsModal) {
-                    closeModal();
-                }
-            });
-            
-            copyCharBtn.addEventListener('click', () => {
-                const char = modalChar.textContent;
-                copyToClipboard(char);
-                showCopiedToast();
-            });
-            
-            copyCodeBtn.addEventListener('click', () => {
-                const code = modalCode.textContent;
-                copyToClipboard(code);
-                showCopiedToast('Code point copied to clipboard!');
-            });
-            
-            copyHtmlBtn.addEventListener('click', () => {
-                const html = modalHtml.textContent;
-                copyToClipboard(html);
-                showCopiedToast('HTML entity copied to clipboard!');
-            });
-            
-            virtualScrollContainer.addEventListener('scroll', () => {
-                if (virtualScrollContainer.scrollTop > 300) {
-                    scrollToTop.classList.add('visible');
-                } else {
-                    scrollToTop.classList.remove('visible');
-                }
-            });
-            
-            scrollToTop.addEventListener('click', () => {
-                virtualScrollContainer.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-            
-            loadMoreBtn.addEventListener('click', () => {
-                visibleCharacters += LOAD_MORE_INCREMENT;
-                if (visibleCharacters >= filteredData.length) {
-                    loadMoreBtn.style.display = 'none';
-                }
-                renderCharacters();
-            });
-            
-            charInput.addEventListener('input', handleCharInput);
-            
-            performanceToggle.addEventListener('change', () => {
-                performanceMode = performanceToggle.checked;
-                document.body.classList.toggle('performance-mode', performanceMode);
-                renderCharacters();
-            });
-        }
         
-        // Handle character input
-        function handleCharInput(e) {
-            const input = e.target.value;
-            if (input.length > 0) {
-                const lastChar = input.charAt(input.length - 1);
-                const codePoint = lastChar.codePointAt(0);
-                const hexCode = codePoint.toString(16).toUpperCase().padStart(4, '0');
-                
-                charInputDisplay.textContent = lastChar;
-                
-                // Find and display character info
-                const charData = charactersData.find(char => char.codePoint === codePoint);
-                if (charData) {
-                    showCharacterDetails(charData);
-                    
-                    // Scroll to the character in the grid
-                    const index = filteredData.findIndex(char => char.codePoint === codePoint);
-                    if (index !== -1) {
-                        const charElements = charactersContainer.querySelectorAll('.character-box');
-                        if (index < charElements.length) {
-                            charElements[index].scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                        }
-                    }
-                }
-            } else {
-                charInputDisplay.textContent = '';
-            }
+        for (let i = 0; i < numberOfParticles; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 80 + 30;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 8;
+            const duration = Math.random() * 10 + 10;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.background = color;
+            particle.style.boxShadow = `0 0 20px ${color.replace(')', ', 0.3)')}`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.animationDuration = `${duration}s`;
+            
+            particlesContainer.appendChild(particle);
         }
-    
-        // Apply filters and search
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const category = categoryFilter.value;
-            let rangeStart = 0;
-            let rangeEnd = 65535;
-            
-            // Get range from either block or range filter
-            if (blockFilter.value) {
-                const [start, end] = blockFilter.value.split(',').map(Number);
-                rangeStart = start;
-                rangeEnd = end;
-            } else if (rangeFilter.value) {
-                const [start, end] = rangeFilter.value.split(',').map(Number);
-                rangeStart = start;
-                rangeEnd = end;
-            }
-            
-            // Filter characters
-            filteredData = charactersData.filter(charData => {
-                // Range filter
-                if (charData.codePoint < rangeStart || charData.codePoint > rangeEnd) {
-                    return false;
-                }
-                
-                // Category filter
-                if (category && charData.category !== category) {
-                    return false;
-                }
-                
-                // Search term
-                if (searchTerm) {
-                    return (
-                        charData.name.toLowerCase().includes(searchTerm) ||
-                        charData.hexCode.toLowerCase().includes(searchTerm) ||
-                        charData.char.toLowerCase().includes(searchTerm) ||
-                        (`u+${charData.hexCode.toLowerCase()}`).includes(searchTerm)
-                    );
-                }
-                
-                return true;
-            });
-            
-            // Update counts
-            visibleCount.textContent = Math.min(visibleCharacters, filteredData.length);
-            totalCount.textContent = filteredData.length;
-            
-            // Show or hide load more button
-            if (filteredData.length > visibleCharacters) {
-                loadMoreBtn.style.display = 'block';
-            } else {
-                loadMoreBtn.style.display = 'none';
-            }
-            
-            // Render the characters
-            renderCharacters();
-        }
-    
-        // Render characters
-        function renderCharacters() {
-            loading.style.display = 'none';
-            virtualScrollContainer.style.display = 'block';
-            
-            // Clear container
-            charactersContainer.innerHTML = '';
-            rangeIndicators.innerHTML = '';
-            
-            // Check if we have results
-            if (filteredData.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.textContent = 'No characters found matching your criteria.';
-                charactersContainer.appendChild(noResults);
-                loadMoreBtn.style.display = 'none';
-                return;
-            }
-            
-            // Calculate visible data
-            const visibleData = filteredData.slice(0, visibleCharacters);
-            
-            // Create range indicators
-            if (filteredData.length > 100) {
-                let currentBlock = null;
-                let blockStart = null;
-                
-                visibleData.forEach((charData, index) => {
-                    const blockInfo = getBlockInfo(charData.codePoint);
-                    const blockName = blockInfo ? blockInfo.name : 'Unknown Block';
-                    
-                    if (blockName !== currentBlock) {
-                        if (currentBlock) {
-                            // End the previous block
-                            const rangeIndicator = document.createElement('div');
-                            rangeIndicator.className = 'range-indicator';
-                            rangeIndicator.textContent = `${currentBlock} (U+${blockStart.toString(16).toUpperCase().padStart(4, '0')} - U+${charData.hexCode})`;
-                            rangeIndicators.appendChild(rangeIndicator);
-                        }
-                        
-                        currentBlock = blockName;
-                        blockStart = charData.hexCode;
-                    }
-                    
-                    // Handle last block
-                    if (index === visibleData.length - 1) {
-                        const rangeIndicator = document.createElement('div');
-                        rangeIndicator.className = 'range-indicator';
-                        rangeIndicator.textContent = `${currentBlock} (U+${blockStart} - U+${charData.hexCode})`;
-                        rangeIndicators.appendChild(rangeIndicator);
-                    }
-                });
-            }
-            
-            // Render characters
-            visibleData.forEach(charData => {
-                const charBox = document.createElement('div');
-                charBox.className = 'character-box';
-                charBox.innerHTML = `
-                    <div class="character">${charData.char}</div>
-                    <div class="character-details">
-                        <div>U+${charData.hexCode}</div>
-                        <div class="char-name">${truncateText(charData.name, 20)}</div>
-                    </div>
-                `;
-                
-                charBox.addEventListener('click', () => {
-                    showCharacterDetails(charData);
-                });
-                
-                charBox.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    copyToClipboard(charData.char);
-                    showCopiedToast();
-                });
-                
-                charactersContainer.appendChild(charBox);
-            });
-            
-            // Update visible count
-            visibleCount.textContent = visibleData.length;
-        }
-    
-        // Show character details in modal
-        function showCharacterDetails(charData) {
-            modalChar.textContent = charData.char;
-            modalTitle.textContent = charData.name;
-            modalName.textContent = charData.name;
-            modalCode.textContent = `U+${charData.hexCode}`;
-            modalHtml.textContent = charData.htmlEntity;
-            modalCss.textContent = charData.cssEscape;
-            modalJs.textContent = charData.jsEscape;
-            modalCategory.textContent = charData.category;
-            modalBlock.textContent = charData.block;
-            
-            detailsModal.classList.add('visible');
-            document.body.style.overflow = 'hidden';
-        }
-    
-        // Close the modal
-        function closeModal() {
-            detailsModal.classList.remove('visible');
-            document.body.style.overflow = '';
-        }
-    
-        // Copy text to clipboard
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).catch(err => {
-                console.error('Failed to copy text: ', err);
-                
-                // Fallback
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = 0;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-            });
-        }
-    
-        // Show copied toast notification
-        function showCopiedToast(message = 'Character copied to clipboard!') {
-            copiedToast.textContent = message;
-            copiedToast.classList.add('visible');
-            
-            setTimeout(() => {
-                copiedToast.classList.remove('visible');
-            }, 2000);
-        }
-    
-        // Helper function to truncate text
-        function truncateText(text, maxLength) {
-            if (text.length <= maxLength) return text;
-            return text.substring(0, maxLength) + '...';
-        }
-    
-        // Initialize the app
-        window.addEventListener('DOMContentLoaded', init);
     </script>
+</body>
+</html>
